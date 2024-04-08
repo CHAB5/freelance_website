@@ -1,0 +1,45 @@
+@import services.search.SearchQuery
+@import models.Job
+@import models.Project
+
+@import java.lang.Math
+@import services.descriptionreadability.DescriptionReadability
+@import wrapper.ProjectsListResponse
+@(searchQueryForm: Form[SearchQuery])(implicit message: play.i18n.Messages)
+@import helper._
+
+<html>
+
+    <head>
+        <script src="https://kit.fontawesome.com/41405bd42c.js" crossorigin="anonymous"></script>
+        <!-- <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/index.css")"> -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap/css/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/custom/indexStylesheet.css")">
+    </head>
+
+    <body>
+
+        <h1 align="center"><p class="a">Welcome to FreeLancelot</h1>
+
+        <h5 align="center">v 1.0.0</h5>
+        <br>
+
+        <div align="center" class=" input-wrapper">
+        <!--<label for="searchQueryInput" class="fa-solid fa-magnifying-glass input-icon"></label>-->
+
+        @helper.form(action = routes.HomeController.queryFreeLancer()) {
+            @helper.inputText(
+                searchQueryForm("searchString"),
+                args = Symbol("id") -> "searchQueryInput", Symbol("type") -> "text", Symbol("placeholder") -> "Enter search query", Symbol("size") -> 50
+            )
+            <input type="submit" value="Go" id="theButton" class="btn btn-primary search-button">
+            }
+        </div>
+
+            <!-- TODO: Display the icon-->
+            <!-- TODO: Figure out a way to replace the ugly "searchQuery" on top of the input text field-->
+
+
+    </body>
+</html>
+

@@ -1,0 +1,37 @@
+.employer-name {
+    width: 604px;
+    height: 59px;
+    left: 324px;
+    top: 275px;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 52px;
+    display: flex;
+    align-items: center;
+
+    color: #364967;
+}
+
+.color-not-verified {
+    color: #fb4818;
+}
+
+.color-verified {
+    color: green;
+}
+
+.employer-attribute-name {
+    margin-left: 0.45rem;
+}
+
+.profile-description {
+    font-style: italic;
+}
+
+.urgent-project {
+    background-color: #ffee00;
+    color: red;
+    font-style: italic;
+}

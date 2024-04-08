@@ -1,0 +1,38 @@
+a.metadata-link {
+    font-style: italic;
+    /*font-weight: bold;*/
+}
+
+.projects-table {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    width: -webkit-fill-available;
+}
+
+.results-card {
+    padding: 0.25rem;
+    margin: 1.5rem;
+}
+
+.search-query-info {
+    text-align: right;
+}
+
+a.metadata-link {
+    text-align: right;
+    color: #74749b !important;
+}
+
+a.metadata-link:hover {
+    background-color: #bdd1f6 !important;
+    color: #34578e !important;
+}
+
+code.search-query-display-name {
+    font-size: 1em;
+    color: black;
+}
+
+#searchQueryInput_field>dt>label {
+    display: none !important;
+}

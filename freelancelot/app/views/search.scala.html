@@ -1,0 +1,152 @@
+@import services.search.SearchQuery
+@import models.Job
+@import models.Project
+
+@import java.lang.Math
+@import util.Utility
+@import services.descriptionreadability.DescriptionReadability
+@import wrapper.ProjectsListResponse
+@(searchQueryForm: Form[SearchQuery], mapSearchQueriesProjectLists: Map[SearchQuery, List[Project]])(implicit message: play.i18n.Messages)
+@import helper._
+
+<html>
+
+    <head>
+        <script src="https://kit.fontawesome.com/41405bd42c.js" crossorigin="anonymous"></script>
+            <!-- <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/index.css")"> -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap/css/bootstrap.min.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/custom/searchStylesheet.css")">
+    </head>
+
+    <body>
+
+        <h2 align="center"><p class="a">Welcome to FreeLancelot</h2>
+
+        <h5 align="center">v 1.0.0</h5>
+        <br>
+
+        <div align="center" class="row justify-content-center input-wrapper" id="searchQueryParentDiv">
+            <div class="col-6">
+                    <!--<label for="searchQueryInput" class="fa-solid fa-magnifying-glass input-icon"></label>-->
+                @helper.form(action = routes.HomeController.queryFreeLancer()) {
+                    @helper.inputText(
+                        searchQueryForm("searchString"),
+                        args = Symbol("id") -> "searchQueryInput", Symbol("type") -> "text", Symbol("placeholder") -> "Enter search query", Symbol("size") -> 50
+                    )
+                    <input type="submit" value="Go" id="theButton" class="btn btn-primary search-button" >
+                    }
+            </div>
+        </div>
+
+            <!-- TODO: Display the icon-->
+            <!-- TODO: Figure out a way to replace the ugly "searchQuery" on top of the input text field-->
+            <!--
+       <form action="/" method="post">
+            <div align="center" class="input-wrapper">
+               <input id="input" type="text" placeholder="Enter search query" size="50" style="font-family: didot;">
+               <input type="submit" value="Go!" id="theButton" style="font-family: didot;">
+               <label for="input" class="fa-solid fa-magnifying-glass input-icon"></label>
+            </div>
+        </form>
+        -->
+
+        @if(mapSearchQueriesProjectLists != null && !mapSearchQueriesProjectLists.isEmpty) {
+            @for((searchQuery, projectList) <- mapSearchQueriesProjectLists) {
+                <section class="section">
+                    <div class="card results-card">
+                        <div class="card-body">
+                            <div class="card-header row">
+                                <div class="col-3 search-query-header">
+                                    <h4 class="card-title"><code class="search-query-display-name"> @searchQuery.getSearchString </code> </h4>
+                                </div>
+                                <div id="search-query-metadata" class="col-9 search-query-info">
+                                    <h6 class="card-subtitle mb-2">
+                                                <span class="m-2">
+                                                    <a class="metadata-link" href="@routes.HomeController.averageIndices(searchQuery.getSearchString())">
+                                                        Flesch Reading Ease Index (FREI): @{
+                                                                    Math.round(projectList.map(project => DescriptionReadability.computeFleschReadabilityIndex(project.preview_description)).sum / projectList.size() * 100.0) / 100.0;
+                                                                }
+                                                    </a>
+                                                </span>
+                                        |
+                                                <span class="m-2">
+                                                    <a class="metadata-link" href="@routes.HomeController.averageIndices(searchQuery.getSearchString())">
+                                                        Flesch Kincaid Grade Level (FKGL): @{
+                                                                Math.round(projectList.map(project => DescriptionReadability.computeFleschKincaidGradeLevel(project.preview_description)).sum / projectList.size() * 100.0)/100.0;
+                                                            }
+                                                    </a>
+                                                </span>
+                                        |
+                                                <span class="m-2">
+                                                    <a class="metadata-link" href="@routes.HomeController.wordStats(searchQuery.getSearchString)">Global Stats</a>
+                                                </span>
+
+                                    </h6>
+                                </div>
+
+                            </div>
+                                <!-- Loop for search query-->
+
+                            <div id="project-list-table">
+                                <table class="table table-striped table-hover projects-table" border="0" cellpadding="5" cellspacing="10" align="center" >
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Owner ID</th> <!-- Hyperlink to employer info task -->
+                                            <th>Date</th>
+                                            <th>Title</th> <!--Hyperlink to freelancer job posting-->
+                                            <th>Type</th>
+                                            <th>Skills</th> <!-- Hyperlink to skills task -->
+                                            <th>Stats</th> <!-- Hyperlink to word stats task -->
+                                            <th>Readability</th> <!-- Hyperlink to description readability task -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @for((project, no) <- projectList.zipWithIndex) {
+                                        <tr>
+                                            <td>@{no+1}</td>
+                                            <td><a href="/users?userId=@project.owner_id">@project.owner_id</a></td>
+                                            <td>
+                                                @{ Utility.convertDate( project.submitdate ) }
+                                            </td>
+                                            <td ><a href="@routes.HomeController.freelancer(project.id)">@project.title</a></td>
+                                                <!-- TODO: Inform Aditya that type is renamed to type_-->
+                                            <td>@project.getType</td>
+                                            <td>
+                                                <ul>
+                                                @for(j <- project.jobs) {
+                                                    <li><a href="@routes.HomeController.getSkills(j.name)">@j.name</a></li>
+                                                }
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                @if(project.preview_description != null && project.preview_description.trim() != "") {
+                                                    <a href="@routes.HomeController.wordStatsIndividual(project.preview_description)" >
+                                                        Stats
+                                                    </a>
+                                                } else {
+                                                    -NA-
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="@routes.HomeController.indices(project.id, project.title, project.preview_description)">
+                                                <ul>
+                                                    <li>FREI: @{Math.round(DescriptionReadability.computeFleschReadabilityIndex(project.preview_description)*100.0)/100.0}</li>
+                                                    <li>FKGL: @{Math.round(DescriptionReadability.computeFleschKincaidGradeLevel(project.preview_description)*100.0)/100.0}</li>
+                                                </ul>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+        }
+    </body>
+</html>
+

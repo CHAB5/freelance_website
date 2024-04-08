@@ -1,0 +1,234 @@
+@import models.Project
+@import controllers.HomeController
+@import wrapper.UserDetailsResponse
+
+@import java.text.SimpleDateFormat
+@(employerInfo: UserDetailsResponse, projects: List[Project])
+
+<head>
+    @* Here's where we render the page title `String`. *@
+    <title>FreeLancelot</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap/css/bootstrap.min.css")">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/custom/userInfoStylesheet.css")">
+</head>
+
+<body id="employerPageBody">
+    <div id="main-div" class="container">
+    @if(employerInfo.result.is_profile_visible) {
+        <div class="row cover-img" id="coverImageDiv">
+        @if(employerInfo != null
+                && employerInfo.result != null
+                && employerInfo.result.cover_image != null
+                && employerInfo.result.cover_image.current_image != null
+                && employerInfo.result.cover_image.current_image.url != null
+        ) {
+            <img src="@employerInfo.result.cover_image.current_image.url">
+        } else {
+            <img src="">
+            }
+        </div>
+        <div id="headerDiv" class="row mt-3" >
+            <div id="employerAllDetailsDiv" class="pic-info-container col d-flex justify-content-between" >
+                <div class="col-9">
+                    <div class="row g-2">
+                        <div  id="profilePictureDiv" class="col-2" style="margin-top: 1rem;">
+                        @if(employerInfo.result.avatar != null && !employerInfo.result.avatar.trim.isEmpty) {
+                            <img src="https://freelancer.com@employerInfo.result.avatar" class="img-thumbnail" alt="Avatar">
+                        } else {
+                            <img src="images/custom/prof_pic.png" class="img-thumbnail" alt="Avatar">
+                            }
+                        </div>
+                        <div id="employerInfoDiv" class="col-10" style="padding-left: 0.5rem;padding-right: 0.75rem;">
+                            <div id="employerNameParentDiv" >
+                                <div id="employerNameDiv" class="employer-name fs-2 text">
+                                    @if(employerInfo.result.company != null && !employerInfo.result.company.toString.isEmpty) {
+                                        @employerInfo.result.company
+                                    } else if(employerInfo.result.public_name != null && !employerInfo.result.public_name.toString.isEmpty) {
+                                    @employerInfo.result.public_name
+                                    } else if(employerInfo.result.username != null && !employerInfo.result.username.toString.isEmpty) {
+                                    @employerInfo.result.username
+                                    }
+                                    @if(employerInfo.result.status.freelancer_verified_user) {
+                                        <i class="fs-5 bi bi-patch-check-fill" style="color: #04c6ed;"></i>
+                                    }
+                                </div>
+                                <div id="descriptionDiv" >
+
+                                    @if(employerInfo.result.username != null && !employerInfo.result.username.trim.isEmpty) {
+                                        <div id="employerUsernameDiv"  class="fs-6">
+                                            <i class="bi bi-at"></i>
+                                            @employerInfo.result.username
+                                        </div>
+                                    }
+
+                                    @if(employerInfo.result.email != null && !employerInfo.result.email.trim.isEmpty) {
+                                        <div id="employerEmailDiv"  class="fs-6">
+                                            <i class="bi bi-at"></i>
+                                            @employerInfo.result.email
+                                        </div>
+                                    }
+
+                                    @if(employerInfo.result.location.country.name != null && !employerInfo.result.location.country.name.trim.isEmpty) {
+                                        <div id="employerLocationDiv" class="fs-6">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                            @if(employerInfo.result.location.city != null && !employerInfo.result.location.city.trim.isEmpty) {
+                                                @employerInfo.result.location.city,
+                                            }
+                                            @employerInfo.result.location.country.name
+                                        </div>
+                                    }
+
+                                    @if(employerInfo.result.timezone.timezone != null && !employerInfo.result.timezone.timezone.trim.isEmpty) {
+                                        <i class="bi bi-clock-fill"></i>
+                                        @employerInfo.result.timezone.timezone
+                                    }
+
+                                    @if(employerInfo.result.profile_description != null && !employerInfo.result.profile_description.trim.isEmpty) {
+
+                                        <p class="profile-description mt-3">
+                                        @employerInfo.result.profile_description
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="status-container col-3">
+                    <div id="employerStatusDetailsDiv" class="card">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" >
+                            @if(employerInfo.result.status.payment_verified) {
+                                <i class="bi bi-cash-stack color-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Payment Verified
+                                </span>
+                            } else {
+                                <i class="bi bi-cash-stack color-not-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Payment Verification Pending
+                                </span>
+                            }
+
+                            </li>
+                            <li class="list-group-item" >
+                            @if(employerInfo.result.status.deposit_made) {
+                                <i class="bi bi-wallet2 color-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Deposit Made
+                                </span>
+                            } else {
+                                <i class="bi bi-wallet2 color-not-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Deposit Pending
+                                </span>
+                            }
+                            </li>
+                            <li class="list-group-item" >
+                            @if(employerInfo.result.status.profile_complete) {
+                                <i class="bi bi-folder-check color-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Profile Completed
+                                </span>
+                            } else {
+                                <i class="bi bi-folder-check color-not-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Profile Incomplete
+                                </span>
+                            }
+                            </li>
+                                <!--
+                            <li class="list-group-item" >
+                                phone_verified = @employerInfo.result.status.phone_verified
+                            </li>
+                            <li class="list-group-item" >
+                                linkedin_connected = @employerInfo.result.status.linkedin_connected
+                            </li>
+                            <li class="list-group-item" >
+                                email_verified = @employerInfo.result.status.email_verified
+                            </li> -->
+                            <li class="list-group-item" >
+                            @if(employerInfo.result.status.identity_verified) {
+                                <i class="bi bi-person-check color-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Identity Verified
+                                </span>
+                            } else {
+                                <i class="bi bi-person-check color-not-verified"></i>
+                                <span class="employer-attribute-name">
+                                    Identity Verification Pending
+                                </span>
+                            }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="allProjectsDiv" class="projects-main-div row mt-3">
+        @if(projects.isEmpty) {
+            <div class="alert alert-warning" role="alert" id="userMsgDiv">
+                No projects as of now!
+            </div>
+        } else {
+            <div class="" id="tableContainerDiv" >
+                <table class="table table-striped table-hover" id="projectsTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Project Id
+                            </th>
+                            <th>
+                                Submit Date
+                            </th>
+                            <th>
+                                Title
+                            </th>
+                            <th>
+                                Type
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <th>
+                                Is Urgent
+                            </th>
+                    <tr/>
+                    </thead>
+                    <tbody>
+                    @for(p <- projects) {
+                        <tr class="">
+                            <td> <a target="_blank" href="@routes.HomeController.freelancer(p.id)" > @p.id </a> </td>
+                            <td> @p.strDateValue </td>
+                            @*                            <td> @{new SimpleDateFormat("MMM dd, yyyy").format(new Date(p.submitdate))} </td>*@
+                            <td> @p.title </td>
+                            <td> @p.getType</td>
+                            <td> @p.status </td>
+                            <td> @p.preview_description </td>
+                            <td>
+                            @if(p.urgent) {
+                                <span class="urgent-project" >Yes</span>
+                            } else {
+                                <span>No</span>
+                            }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        </div>
+    } else {
+        <div class="alert alert-secondary" role="alert">
+            Sorry, This profile is not visible!
+        </div>
+    }
+    </div>
+</body>

@@ -1,0 +1,60 @@
+@import services.descriptionreadability.DescriptionReadability
+@(
+        searchString: String,
+        averageFREI: Double,
+        averageFKGL: Double,
+        listOfProjects: List[Project]
+)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+        Description Readability Indices</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+                body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+                h1{font-family:Arial, sans-serif;color:#000000;background-color:#ffffff;}
+                p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+        </style>
+    </head>
+    <body>
+        <h2>Description Readability Indices</h2>
+        <h3>Search : @searchString</h3>
+        <p># Results: @listOfProjects.size()</p>
+        <p>
+            <h4>
+            <b><i>
+                Flesch Reading Ease Index (FREI) : @{Math.round(averageFREI*100.0)/100.0}
+                <br>
+                Flesch Kincaid Grade Level (FKGL) : @{Math.round(averageFKGL*100.0)/100.0}
+            </i></b>
+            </h4>
+        </p>
+        <table>
+            <caption style="text-align:center; table-layout: fixed; width: 100%">Description Readability Indices for Projects</caption>
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>FREI</th>
+                    <th>FKGL</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for((project, no) <- listOfProjects.zipWithIndex) {
+                <tr>
+                    <td>@{no+1}</td>
+                    <td>@project.id</td>
+                    <td>@project.title</td>
+                    <td>@project.preview_description</td>
+                    <td>@{Math.round(DescriptionReadability.computeFleschReadabilityIndex(project.preview_description)*100.0)/100.0}</td>
+                    <td>@{Math.round(DescriptionReadability.computeFleschKincaidGradeLevel(project.preview_description)*100.0)/100.0}</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </body>
+</html>

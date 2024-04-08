@@ -1,0 +1,35 @@
+@import services.descriptionreadability.DescriptionReadability
+@(projectID: Integer, projectTitle: String, projectPreviewDescription: String)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+        Description Readability Indices</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+                body {background-color:#ffffff;background-repeat:no-repeat;background-position:top left;background-attachment:fixed;}
+                h1{font-family:Arial, sans-serif;color:#000000;background-color:#ffffff;}
+                p {font-family:Georgia, serif;font-size:14px;font-style:normal;font-weight:normal;color:#000000;background-color:#ffffff;}
+        </style>
+    </head>
+    <body>
+        <h2>Description Readability Indices</h2>
+        <p>
+            <h3>Project Title: @projectTitle</h3>
+            <h5>Project ID: @projectID</h5>
+        </p>
+        <p>
+            Project Description: @projectPreviewDescription
+        </p>
+        <p>
+            <b><i>
+            Flesch Reading Ease Index (FREI) :
+                @{Math.round(DescriptionReadability.computeFleschReadabilityIndex(projectPreviewDescription)*100.0)/100.0}
+                <br>
+            Flesch Kincaid Grade Level (FKGL) :
+                @{Math.round(DescriptionReadability.computeFleschKincaidGradeLevel(projectPreviewDescription)*100.0)/100.0}
+            </i></b>
+        </p>
+    </body>
+</html>

@@ -1,0 +1,68 @@
+@import models.Job
+@import models.Project
+@import services.descriptionreadability.DescriptionReadability
+@import wrapper.ProjectsListResponse
+@import util.Utility
+@(projects: List[Project], name: String)
+
+<html>
+<body>
+<div id="skills_heading">
+    <h2 style="font-family: didot"><center>Displaying results for skill: @name</center></h2><br>
+</div>
+<div id="project-list-table">
+    <table border="0" cellpadding="5" cellspacing="10" align="center" style="table-layout: fixed; font-family: didot">
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Owner ID</th> <!-- Hyperlink to employer info task -->
+            <th>Date</th>
+            <th>Title</th> <!--Hyperlink to freelancer job posting-->
+            <th>Type</th>
+            <th>Skills</th> <!-- Hyperlink to skills task -->
+            <th>Stats</th> <!-- Hyperlink to word stats task -->
+            <th>Readability</th> <!-- Hyperlink to description readability task -->
+        </tr>
+        </thead>
+        <tbody>
+        @for((project, no) <- projects.zipWithIndex) {
+        <tr>
+            <td>@{no+1}</td>
+            <td><a href="/users?userId=@project.owner_id">@project.owner_id</a></td>
+            <td>@{ Utility.convertDate( project.submitdate ) }</td>
+            <td style="word-break: break-all"><a href="@routes.HomeController.freelancer(project.id)">@project.title</a></td>
+            <!-- TODO: Inform Aditya that type is renamed to type_-->
+            <td>@project.getType</td>
+            <td>
+                <ul>
+                    @for(j <- project.jobs) {
+                    <li><a href="@routes.HomeController.getSkills(j.name)">@j.name</a></li>
+                    }
+                </ul>
+            </td>
+            <td>
+                @if(project.preview_description != null && project.preview_description.trim() != "") {
+                <a href="@routes.HomeController.wordStatsIndividual(project.preview_description)" >
+                    Stats
+                </a>
+                } else {
+                -NA-
+                }
+            </td>
+            <td>
+                <a href="@routes.HomeController.indices(project.id, project.title, project.preview_description)">
+
+                <ul>
+                    <li>FREI: @{Math.round(DescriptionReadability.computeFleschReadabilityIndex(project.preview_description)*100.0)/100.0}</li>
+                    <li>FKGL: @{Math.round(DescriptionReadability.computeFleschKincaidGradeLevel(project.preview_description)*100.0)/100.0}</li>
+                </ul>
+                </a>
+            </td>
+        </tr>
+        }
+        </tbody>
+
+    </table>
+</div>
+</body>
+</html>
